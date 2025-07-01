@@ -29,9 +29,8 @@ async def global_exception_handler(request, exc):
 # 添加健康检查
 @app.get("/health")
 async def health_check():
+    """健康检查接口"""
     return {"status": "healthy"}
-
-
 
 class ClassificationRequest(BaseModel):
     text: str
@@ -72,8 +71,3 @@ async def classify_text(request: ClassificationRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/health")
-async def health_check():
-    """健康检查接口"""
-    return {"status": "healthy"}

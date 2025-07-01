@@ -8,27 +8,24 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+# path = "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli"
+path = "/Users/yinbenxin/model/nlp_structbert_zero-shot-classification_chinese-base"
 
 class TextClassifier:
-    def __init__(self, model_path: str="MoritzLaurer/mDeBERTa-v3-base-mnli-xnli", local_dir: str="models"):
+    def __init__(self, model_path: str=path):
         """初始化分类器
         
         Args:
             model_path: 模型路径或名称
-            local_dir: 本地模型保存目录
         """
-        self.local_dir = local_dir
-        if not os.path.exists(local_dir):
-            os.makedirs(local_dir)
-            
+ 
         logger.info(f'正在初始化分类器，使用模型：{model_path}')
         try:
             # 检查本地模型
-            local_model_path = os.path.join(local_dir, os.path.basename(model_path))
-            if os.path.exists(local_model_path):
-                logger.info(f'发现本地模型：{local_model_path}')
-                model = AutoModelForSequenceClassification.from_pretrained(local_model_path)
-                tokenizer = AutoTokenizer.from_pretrained(local_model_path)
+            if os.path.exists(model_path):
+                logger.info(f'发现本地模型：{model_path}')
+                model = AutoModelForSequenceClassification.from_pretrained(model_path)
+                tokenizer = AutoTokenizer.from_pretrained(model_path)
                 self.classifier = pipeline(
                     'zero-shot-classification',
                     model=model,
@@ -39,9 +36,9 @@ class TextClassifier:
                 model = AutoModelForSequenceClassification.from_pretrained(model_path)
                 tokenizer = AutoTokenizer.from_pretrained(model_path)
                 # 保存到本地
-                model.save_pretrained(local_model_path)
-                tokenizer.save_pretrained(local_model_path)
-                logger.info(f'模型已保存到本地：{local_model_path}')
+                # model.save_pretrained(model_path)
+                # tokenizer.save_pretrained(model_path)
+                # logger.info(f'模型已保存到本地：{model_path}')
                 self.classifier = pipeline(
                     'zero-shot-classification',
                     model=model,
