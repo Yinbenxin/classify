@@ -79,6 +79,19 @@ print(result)
 
 程序运行日志保存在`classifier/classifier.log`文件中，可以查看详细的运行信息和错误信息。
 
+## 测试
+
+执行单元测试：
+
+```bash
+# 运行所有测试
+python -m unittest discover api/tests
+
+# 运行指定测试文件
+python -m unittest api.tests.test_api
+python -m unittest api.tests.test_image
+```
+
 ## 许可证
 
 MIT
