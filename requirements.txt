@@ -1,0 +1,14 @@
+
+numpy<2
+datasets==2.18.0
+modelscope==1.27.1
+pandas<2.1.0
+bottleneck<1.4
+numexpr<2.9.0
+addict==2.4.0
+torch==2.7.1
+pillow==11.2.1
+simplejson==3.20.1
+sortedcontainers==2.4.0
+scipy==1.15.3
+transformers==4.53.0
