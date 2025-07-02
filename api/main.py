@@ -9,8 +9,8 @@ import json
 
 # 添加项目目录到系统路径
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from classifier.classifier import TextClassifier
-from transformer.image import ImageRecognizer
+from tools.classifier.classifier import TextClassifier
+from tools.transformer.image import ImageRecognizer
 
 app = FastAPI(
     title="文本分类API",

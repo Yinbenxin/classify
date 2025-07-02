@@ -1,19 +1,32 @@
-# 中文零样本文本分类器
+# 中文零样本分类服务
 
-这个项目提供了一个基于ModelScope的中文零样本文本分类工具，可以对任意中文文本进行分类，无需额外训练。
+这个项目提供了一个基于深度学习的中文零样本分类服务，支持文本分类和图像识别功能。
 
 ## 功能特点
 
-- 零样本分类：无需训练数据，直接对文本进行分类
+- 零样本分类：无需训练数据，直接进行分类
+- 多模态支持：同时支持文本分类和图像识别
+- RESTful API：提供标准的HTTP接口
 - 自定义标签：支持自定义任意分类标签
-- 命令行接口：提供简洁的命令行接口，方便集成和使用
-- 结果导出：支持将分类结果导出为JSON格式
 - 错误处理：内置多种错误处理机制，提高稳定性
 
 ## 环境要求
 
 - Python 3.8+
 - 依赖包：见`requirements.txt`
+
+## 项目结构
+
+```
+├── api/          # API服务
+│   ├── main.py   # FastAPI应用
+│   └── tests/    # 测试用例
+├── tools/        # 工具模块
+│   ├── classifier/    # 文本分类器
+│   └── transformer/   # 图像识别器
+└── model/       # 模型管理
+    └── download.py    # 模型下载脚本
+```
 
 ## 安装
 
@@ -30,54 +43,36 @@ cd classify
 pip install -r requirements.txt
 ```
 
-## 使用方法
-
-### 基本用法
+3. 下载模型：
 
 ```bash
-python classifier/classifier.py
+python model/download.py
 ```
 
-这将使用默认文本和标签运行分类器。
+## API服务
 
-### 自定义文本和标签
+启动服务：
 
 ```bash
-python classifier/classifier.py --text "这是一个需要分类的文本" --labels "教育,科技,娱乐,体育"
+uvicorn api.main:app --reload
 ```
 
-### 保存结果到文件
+### 文本分类
 
 ```bash
-python classifier/classifier.py --text "这是一个需要分类的文本" --output "result.json"
+curl -X POST "http://localhost:8000/classify" \
+     -H "Content-Type: application/json" \
+     -d '{"text":"这是一个测试文本","labels":["教育","科技","娱乐"]}'
 ```
 
-### 使用自定义模型
+### 图像识别
 
 ```bash
-python classifier/classifier.py --model_path "/path/to/your/model"
+curl -X POST "http://localhost:8000/classify/image" \
+     -F "image=@/path/to/image.jpg" \
+     -F "labels=[\"猫\",\"狗\",\"鸟\"]" \
+     -F "num_results=3"
 ```
-
-## API使用
-
-您也可以在Python代码中直接使用分类函数：
-
-```python
-from classifier.classifier import classify_text
-
-text = "这是一个测试文本"
-labels = ["教育", "科技", "娱乐", "体育"]
-result = classify_text(text, labels)
-print(result)
-```
-
-## 故障排除
-
-如果遇到`TypeError: transformers.tokenization_utils.PreTrainedTokenizer._batch_encode_plus() got multiple values for keyword argument 'truncation_strategy'`错误，这是由于transformers库版本兼容性问题导致的。代码中已经包含了自动处理这种情况的逻辑。
-
-## 日志
-
-程序运行日志保存在`classifier/classifier.log`文件中，可以查看详细的运行信息和错误信息。
 
 ## 测试
 
@@ -91,6 +86,12 @@ python -m unittest discover api/tests
 python -m unittest api.tests.test_api
 python -m unittest api.tests.test_image
 ```
+
+## 故障排除
+
+1. 如果遇到模型下载失败，请检查网络连接并重试
+2. 如果API服务无法启动，请确保端口8000未被占用
+3. 如果分类结果不准确，可以尝试调整或增加标签
 
 ## 许可证
 

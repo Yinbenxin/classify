@@ -8,11 +8,10 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-# path = "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli"
-path = "/Users/yinbenxin/model/nlp_structbert_zero-shot-classification_chinese-base"
+model_path = "/tmp/model/nlp_structbert_zero-shot-classification_chinese-base"
 
 class TextClassifier:
-    def __init__(self, model_path: str=path):
+    def __init__(self, model_path: str=model_path):
         """初始化分类器
         
         Args:
