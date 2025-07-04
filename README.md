@@ -41,6 +41,7 @@ cd classify
 
 ```bash
 pip install -r requirements.txt
+brew install ffmpeg
 ```
 
 3. 下载模型：
