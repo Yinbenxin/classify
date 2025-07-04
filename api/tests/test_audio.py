@@ -2,18 +2,17 @@ import unittest
 import requests
 import os
 
-class TestImageClassificationAPI(unittest.TestCase):
+class TestAudioClassificationAPI(unittest.TestCase):
     def setUp(self):
         self.base_url = 'http://127.0.0.1:8000'
-        self.classify_image_url = f'{self.base_url}/classify/image'
+        self.classify_audio_url = f'{self.base_url}/classify/audio'
+        self.audio_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../audio/06_life_services_1_information_inquiry_01.wav'))
 
-    def test_classify_image(self):
-        """测试图片分类接口（仅使用默认标签）"""
-        image_path = "audio/food.jpeg"
-        self.assertTrue(os.path.exists(image_path), f"测试图片文件不存在: {image_path}")
-        with open(image_path, "rb") as img_file:
-            files = {"image": (os.path.basename(image_path), img_file, "image/jpeg")}
-            response = requests.post(self.classify_image_url, files=files)
+    def test_classify_audio_with_default_labels(self):
+        """测试音频分类接口（仅使用默认标签）"""
+        with open(self.audio_path, 'rb') as f:
+            files = {'audio': (os.path.basename(self.audio_path), f, 'audio/wav')}
+            response = requests.post(self.classify_audio_url, files=files)
         self.assertEqual(response.status_code, 200)
         result = response.json()
         self.assertIn("results", result)

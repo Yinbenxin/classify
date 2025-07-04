@@ -62,7 +62,7 @@ uvicorn api.main:app --reload
 ```bash
 curl -X POST "http://localhost:8000/classify" \
      -H "Content-Type: application/json" \
-     -d '{"text":"这是一个测试文本","labels":["教育","科技","娱乐"]}'
+     -d '{"txt":"这是一个测试文本","labels":["教育","科技","娱乐"]}'
 ```
 
 ### 图像识别

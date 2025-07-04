@@ -8,9 +8,9 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-model_path = "/tmp/model/nlp_structbert_zero-shot-classification_chinese-base"
+model_path = "/etc/model/nlp_structbert_zero-shot-classification_chinese-base"
 
-class TextClassifier:
+class txtClassifier:
     def __init__(self, model_path: str=model_path):
         """初始化分类器
         
@@ -82,7 +82,7 @@ class TextClassifier:
 if __name__ == '__main__':
     # 测试代码
 
-    classifier = TextClassifier()
+    classifier = txtClassifier()
     
     test_sequence = '世界那么大，我想去看看'
     test_labels = ['旅游', '故事', '游戏', '军事', '科技', '家居']

@@ -11,7 +11,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-model_path ="/tmp/model/blip-model"
+model_path ="/etc/model/blip-model"
 
 class ImageRecognizer:
     def __init__(self, model_path: str = model_path):
