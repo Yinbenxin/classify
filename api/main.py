@@ -9,6 +9,8 @@ import json
 import tempfile
 import pathlib
 import logging
+import csv
+import io
 
 # 添加项目目录到系统路径
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -155,4 +157,53 @@ async def classify_image(image: UploadFile = File(...)):
         logger.info(f'图像分类结果：{all_results}')
         return {"results": all_results}
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/classify/csv")
+async def classify_csv(csv_file: UploadFile = File(...)):
+    try:
+        label_groups = default_labels.get('csv', default_labels.get('txt', []))
+        if not label_groups:
+            return {"results": []}
+            
+        # 读取CSV文件内容
+        csv_content = await csv_file.read()
+        csv_text = csv_content.decode('utf-8')
+        
+        # 使用CSV模块解析CSV内容
+        csv_reader = csv.reader(io.StringIO(csv_text))
+        
+        # 提取表头（第一行）
+        headers = next(csv_reader, [])
+        
+        if not headers:
+            return {"results": []}
+        
+        # 将表头合并成一个字符串
+        header_text = ", ".join(headers)
+        logger.info(f'CSV表头：{header_text}')
+        #将表名也合并到header_text
+        header_text = f'表名：{csv_file.filename.split(".")[0]}，表头：{header_text}'
+
+        # 使用合并后的表头文本进行分类
+        all_results = []
+        for label_group in label_groups:
+            if not label_group:
+                all_results.append([])
+                continue
+                
+            result = classifier.classify(
+                sequence=header_text,
+                labels=label_group
+            )
+            
+            if result['labels'] and result['scores']:
+                all_results.append([result['labels'][0], result['scores'][0]])
+            else:
+                all_results.append([])
+                
+        logger.info(f'CSV分类结果：{all_results}')
+        return {"results": all_results}
+    except Exception as e:
+        logger.error(f'CSV分类错误：{str(e)}')
         raise HTTPException(status_code=500, detail=str(e))
