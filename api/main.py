@@ -17,6 +17,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tools.classifier.classifier import txtClassifier
 from tools.transformer.image import ImageRecognizer
 from tools.transformer.audio import AudioRecognizer
+from tools.default_labels import unified_security_matrix, get_all_labels
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -53,16 +54,17 @@ classifier = txtClassifier()
 image_recognizer = ImageRecognizer()
 audio_recognizer = AudioRecognizer()
 
-# 加载默认标签
-DEFAULT_LABELS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'default_labels.json')
-
 def load_default_labels():
-    """加载默认标签"""
+    """从 default_labels.py 加载默认标签"""
     try:
-        if os.path.exists(DEFAULT_LABELS_PATH):
-            with open(DEFAULT_LABELS_PATH, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        return {}
+        labels_dict = get_all_labels()
+        # 转换为API需要的格式
+        return {
+            'txt': [labels_dict.get('txt', [])],
+            'audio': [labels_dict.get('audio', [])],
+            'image': [labels_dict.get('image', [])],
+            'csv': [labels_dict.get('csv', [])]
+        }
     except Exception as e:
         print(f"加载默认标签失败: {str(e)}")
         return {}
@@ -71,6 +73,10 @@ default_labels = load_default_labels()
 
 class TxtRequest(BaseModel):
     txt: str
+
+class SecurityLevelRequest(BaseModel):
+    category: str  # 类别名称
+    security_level: str  # 安全级别：'低风险等级', '中风险等级', '高风险等级'
 
 @app.post("/classify/txt")
 async def classify_txt(request: TxtRequest):
@@ -125,6 +131,8 @@ async def classify_audio(audio: UploadFile = File(...)):
                     all_results.append([])
             logger.info(f'音频分类结果：{all_results}')
             return {"results": all_results}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
         finally:
             if os.path.exists(temp_audio_path):
                 os.remove(temp_audio_path)
@@ -207,3 +215,54 @@ async def classify_csv(csv_file: UploadFile = File(...)):
     except Exception as e:
         logger.error(f'CSV分类错误：{str(e)}')
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/security/level")
+async def get_security_level(request: SecurityLevelRequest):
+    """根据类别和安全级别获取对应的级别值"""
+    try:
+        # 检查类别是否存在
+        if request.category not in unified_security_matrix:
+            raise HTTPException(status_code=404, detail=f"未找到类别: {request.category}")
+        
+        # 检查安全级别是否有效
+        if request.security_level not in ["低风险等级", "中风险等级", "高风险等级"]:
+            raise HTTPException(status_code=400, detail=f"不支持的安全级别: {request.security_level}")
+        
+        # 获取对应的级别值
+        level_value = unified_security_matrix[request.category][request.security_level]
+        
+        logger.info(f'安全级别查询结果：类别={request.category}, 级别={request.security_level}, 值={level_value}')
+        return {
+            "category": request.category,
+            "security_level": request.security_level,
+            "level_value": level_value
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f'安全级别查询错误：{str(e)}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/security/categories")
+async def get_categories():
+    """获取所有类别"""
+    try:
+        # 获取所有类别
+        categories = list(unified_security_matrix.keys())
+        
+        return {
+            "categories": categories,
+            "total_count": len(categories)
+        }
+        
+    except Exception as e:
+        logger.error(f'获取类别错误：{str(e)}')
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/security/levels")
+async def get_security_levels():
+    """获取所有可用的安全级别"""
+    return {
+        "security_levels": ["低风险等级", "中风险等级", "高风险等级"]
+    }
