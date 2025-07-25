@@ -7,7 +7,7 @@ class TestAudioClassificationAPI(unittest.TestCase):
         self.base_url = 'http://127.0.0.1:8000'
         self.classify_audio_url = f'{self.base_url}/classify/audio'
         self.audio_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../audio/06_life_services_1_information_inquiry_01.wav'))
-
+        self.assertTrue(os.path.exists(self.audio_path), f"测试音频文件不存在: {self.audio_path}")
     def test_classify_audio_with_default_labels(self):
         """测试音频分类接口（仅使用默认标签）"""
         with open(self.audio_path, 'rb') as f:

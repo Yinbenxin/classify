@@ -37,6 +37,9 @@ class AudioRecognizer:
                 
                 processor = AutoProcessor.from_pretrained(model_path)
                 
+                # 清除模型的 forced_decoder_ids 配置
+                model.generation_config.forced_decoder_ids = None
+                
                 self.pipe = pipeline(
                     "automatic-speech-recognition",
                     model=model,
@@ -48,6 +51,7 @@ class AudioRecognizer:
                     return_timestamps=False,
                     torch_dtype=torch_dtype,
                     device=device,
+                    generate_kwargs={"language": "chinese"}
                 )
             else:
                 logger.info(f'本地模型不存在，从网络加载：openai/whisper-small')
@@ -62,6 +66,9 @@ class AudioRecognizer:
                 
                 processor = AutoProcessor.from_pretrained("openai/whisper-small")
                 
+                # 清除模型的 forced_decoder_ids 配置
+                model.generation_config.forced_decoder_ids = None
+                
                 self.pipe = pipeline(
                     "automatic-speech-recognition",
                     model=model,
@@ -73,6 +80,7 @@ class AudioRecognizer:
                     return_timestamps=False,
                     torch_dtype=torch_dtype,
                     device=device,
+                    generate_kwargs={"language": "chinese"}
                 )
                 
                 # 保存到本地
@@ -101,7 +109,7 @@ class AudioRecognizer:
                 
             logger.info(f'开始转录音频：{audio_file}')
             result = self.pipe(audio_file)
-            transcription = result["txt"]
+            transcription = result["text"]
             
             logger.info(f'音频转录完成：{transcription}')
             return transcription
@@ -114,6 +122,6 @@ if __name__ == '__main__':
     recognizer = AudioRecognizer()
     
     # 测试本地音频文件（如果有的话）
-    # audio_file = 'path/to/your/audio.mp3'
-    # print('\n音频转录结果：')
-    # print(recognizer.transcribe(audio_file))
+    audio_file = '/var/folders/fg/cdwfcq7j0xx97fpzvv3yydcr0000gn/T/tmp4usko48q.wav'
+    print('\n音频转录结果：')
+    print(recognizer.transcribe(audio_file))
