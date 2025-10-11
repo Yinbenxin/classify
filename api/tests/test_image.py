@@ -16,6 +16,7 @@ class TestImageClassificationAPI(unittest.TestCase):
             response = requests.post(self.classify_image_url, files=files)
         self.assertEqual(response.status_code, 200)
         result = response.json()
+        print(result)
         self.assertIn("results", result)
         for group in result["results"]:
             self.assertIsInstance(group, list)

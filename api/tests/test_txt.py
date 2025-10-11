@@ -12,6 +12,7 @@ class TestTxtClassificationAPI(unittest.TestCase):
         response = requests.post(self.classify_txt_url, json=data)
         self.assertEqual(response.status_code, 200)
         result = response.json()
+        print(result)
         self.assertIn("results", result)
         for group in result["results"]:
             if group:

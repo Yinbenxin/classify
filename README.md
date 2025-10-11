@@ -90,7 +90,6 @@ curl -X POST "http://localhost:8000/classify/txt" \
 {
   "results": [
     ["信息查询", 0.85],
-    ["生活服务", 0.92]
   ]
 }
 ```
@@ -101,9 +100,16 @@ curl -X POST "http://localhost:8000/classify/txt" \
 
 ```bash
 curl -X POST "http://localhost:8000/classify/audio" \
-     -F "audio=@/path/to/audio.wav"
+     -F "audio=@/Users/yinbenxin/code/classify/audio/06_life_services_1_information_inquiry_01.wav"
 ```
-
+**响应示例**:
+```json
+{
+  "results": [
+    ["交易办理 - 生活服务",0.375797301530838],
+  ]
+}
+```
 **功能**: 自动将音频转录为中文文本，然后进行分类
 
 ### 3. 图像分类
@@ -112,7 +118,15 @@ curl -X POST "http://localhost:8000/classify/audio" \
 
 ```bash
 curl -X POST "http://localhost:8000/classify/image" \
-     -F "image=@/path/to/image.jpg"
+     -F "image=@/Users/yinbenxin/code/classify/audio/food.jpeg"
+```
+**响应示例**:
+```json
+{
+  "results": [
+    ["标识与Logo", 0.455990731716156],
+  ]
+}
 ```
 
 **功能**: 识别图像内容并生成描述，然后进行分类
@@ -123,7 +137,15 @@ curl -X POST "http://localhost:8000/classify/image" \
 
 ```bash
 curl -X POST "http://localhost:8000/classify/csv" \
-     -F "csv_file=@/path/to/data.csv"
+     -F "csv_file=@/Users/yinbenxin/code/classify/audio/data.csv"
+```
+**响应示例**:
+```json
+{
+  "results": [
+    ["个人财产信息", 0.6683307886123657]
+  ]
+}
 ```
 
 **功能**: 分析CSV文件的表头和文件名，进行数据类型分类
@@ -135,13 +157,13 @@ curl -X POST "http://localhost:8000/classify/csv" \
 ```bash
 curl -X POST "http://localhost:8000/security/level" \
      -H "Content-Type: application/json" \
-     -d '{"category":"个人基本信息","security_level":"低风险等级"}'
+     -d '{"category":"个人基本资料","security_level":"低风险等级"}'
 ```
 
 **响应示例**:
 ```json
 {
-  "category": "个人基本信息",
+  "category": "个人基本资料",
   "security_level": "低风险等级",
   "level_value": 2
 }
@@ -154,6 +176,16 @@ curl -X POST "http://localhost:8000/security/level" \
 ```bash
 curl "http://localhost:8000/security/categories"
 ```
+**响应示例**:
+```json
+{
+  "categories": [
+    "个人基本资料",
+     ...
+    "其他"
+  ]
+}
+```
 
 ### 7. 获取安全级别列表
 
@@ -162,6 +194,14 @@ curl "http://localhost:8000/security/categories"
 ```bash
 curl "http://localhost:8000/security/levels"
 ```
+**响应示例**:
+```json
+{
+  "security_levels": ["低风险等级","中风险等级","高风险等级"]
+}
+```
+
+
 
 ## 测试
 

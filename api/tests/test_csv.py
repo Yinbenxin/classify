@@ -23,6 +23,7 @@ class TestCSVClassificationAPI(unittest.TestCase):
         # 验证响应
         self.assertEqual(response.status_code, 200)
         result = response.json()
+        print(result)
         self.assertIn("results", result)
         
         # 验证结果格式
