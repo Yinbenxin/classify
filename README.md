@@ -106,7 +106,7 @@ curl -X POST "http://localhost:8000/classify/audio" \
 ```json
 {
   "results": [
-    ["交易办理 - 生活服务",0.375797301530838],
+    ["交易办理 - 生活服务",0.375797301530838]
   ]
 }
 ```
@@ -124,7 +124,7 @@ curl -X POST "http://localhost:8000/classify/image" \
 ```json
 {
   "results": [
-    ["标识与Logo", 0.455990731716156],
+    ["标识与Logo", 0.455990731716156]
   ]
 }
 ```
