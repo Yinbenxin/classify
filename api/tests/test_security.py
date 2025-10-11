@@ -16,12 +16,13 @@ class TestSecurityLevelAPI(unittest.TestCase):
         response = requests.post(self.security_level_url, json=test_data)
         self.assertEqual(response.status_code, 200)
         result = response.json()
+        print(result)
         
         self.assertIn("category", result)
         self.assertIn("security_level", result)
         self.assertIn("level_value", result)
         self.assertIsInstance(result["level_value"], int)
-        print(f"环境变量在低风险等级的得分: {result['level_value']}")
+        print(f"环境变量风险等级的得分: {result['level_value']}")
 
 if __name__ == '__main__':
     unittest.main()
